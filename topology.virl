@@ -4,7 +4,7 @@
         <entry key="management_network" type="String">flat</entry>
         <entry key="management_lxc-iperf" type="Boolean">true</entry>
     </extensions>
-    <node name="internet" type="SIMPLE" subtype="IOSv" location="370,327">
+    <node name="internet" type="SIMPLE" subtype="CSR1000v" location="370,327">
         <extensions>
             <entry key="ansible_group" type="String">routers</entry>
             <entry key="config" type="String">!
@@ -31,7 +31,7 @@ username admin privilege 15 password 0 admin
 !
 cdp run
 !
-interface GigabitEthernet0/0
+interface GigabitEthernet1
  description OOB Management
  vrf forwarding Mgmt-intf
  ip address dhcp
@@ -40,7 +40,7 @@ interface GigabitEthernet0/0
  no mop sysid
  cdp enable
 !
-interface GigabitEthernet0/1
+interface GigabitEthernet2
  description DC Border
  ip address 172.20.0.5 255.255.255.252
  negotiation auto
@@ -48,7 +48,7 @@ interface GigabitEthernet0/1
  no mop sysid
  cdp enable
 !
-interface GigabitEthernet0/2
+interface GigabitEthernet3
  description to site1
  ip address 172.20.0.9 255.255.255.252
  ip ospf cost 1
@@ -57,7 +57,7 @@ interface GigabitEthernet0/2
  no mop sysid
  cdp enable
 !
-interface GigabitEthernet0/3
+interface GigabitEthernet4
  description to site2
  ip address 172.20.0.13 255.255.255.252
  ip ospf cost 1
@@ -66,7 +66,7 @@ interface GigabitEthernet0/3
  no mop sysid
  cdp enable
 !
-interface GigabitEthernet0/4
+interface GigabitEthernet5
  description to sp1
  ip address 172.20.0.17 255.255.255.252
  ip ospf cost 1
@@ -75,7 +75,7 @@ interface GigabitEthernet0/4
  no mop sysid
  cdp enable
 !
-interface GigabitEthernet0/5
+interface GigabitEthernet6
  description to partner4
  ip address 172.20.0.21 255.255.255.252
  ip ospf cost 1
@@ -91,6 +91,7 @@ router bgp 65000
  neighbor 172.20.0.18 remote-as 65002
 !
 ip route 172.20.0.0 255.255.0.0 Null0
+ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 199.66.188.129
 !
 ip ssh version 2
 !
@@ -109,11 +110,11 @@ end
 
 </entry>
         </extensions>
-        <interface id="0" name="GigabitEthernet0/1"/>
-        <interface id="1" name="GigabitEthernet0/2"/>
-        <interface id="2" name="GigabitEthernet0/3"/>
-        <interface id="3" name="GigabitEthernet0/4"/>
-        <interface id="4" name="GigabitEthernet0/5"/>
+        <interface id="0" name="GigabitEthernet2"/>
+        <interface id="1" name="GigabitEthernet3"/>
+        <interface id="2" name="GigabitEthernet4"/>
+        <interface id="3" name="GigabitEthernet5"/>
+        <interface id="4" name="GigabitEthernet6"/>
     </node>
     <node name="host1" type="SIMPLE" subtype="lxc-iperf" location="254,558" ipv4="192.168.1.10">
         <extensions>
@@ -272,6 +273,7 @@ Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment; filename="vedge.init-config"
 
 #cloud-boothook
+
 vpn 0
  no interface eth0
 
@@ -290,25 +292,25 @@ vpn 512
             <entry key="ansible_group" type="String">vedge</entry>
             <entry key="config" type="String"> </entry>
         </extensions>
-        <interface id="0" name="eth1"/>
-        <interface id="1" name="eth2"/>
-        <interface id="2" name="eth3"/>
+        <interface id="0" name="ge0/0"/>
+        <interface id="1" name="ge0/1"/>
+        <interface id="2" name="ge0/2"/>
     </node>
     <node name="vedge1" type="SIMPLE" subtype="vEdge" location="256,449">
         <extensions>
             <entry key="ansible_group" type="String">vedge</entry>
             <entry key="config" type="String"> </entry>
         </extensions>
-        <interface id="0" name="eth1"/>
-        <interface id="1" name="eth2"/>
+        <interface id="0" name="ge0/0"/>
+        <interface id="1" name="ge0/1"/>
     </node>
     <node name="vedge2" type="SIMPLE" subtype="vEdge" location="450,446">
         <extensions>
             <entry key="ansible_group" type="String">vedge</entry>
             <entry key="config" type="String"> </entry>
         </extensions>
-        <interface id="0" name="eth1"/>
-        <interface id="1" name="eth2"/>
+        <interface id="0" name="ge0/0"/>
+        <interface id="1" name="ge0/1"/>
     </node>
     <node name="DMZ" type="SIMPLE" subtype="Unmanaged Switch" location="373,120">
         <interface id="0" name="link1"/>
@@ -317,7 +319,7 @@ vpn 512
         <interface id="3" name="link4"/>
         <interface id="4" name="link5"/>
     </node>
-    <node name="hq" type="SIMPLE" subtype="IOSv" location="374,191">
+    <node name="hq" type="SIMPLE" subtype="CSR1000v" location="374,191">
         <extensions>
             <entry key="ansible_group" type="String">routers</entry>
             <entry key="config" type="String">!
@@ -344,7 +346,7 @@ username admin privilege 15 password 0 admin
 !
 cdp run
 !
-interface GigabitEthernet0/0
+interface GigabitEthernet1
  description OOB Management
  vrf forwarding Mgmt-intf
  ip address dhcp
@@ -353,7 +355,7 @@ interface GigabitEthernet0/0
  no mop sysid
  cdp enable
 !
-interface GigabitEthernet0/1
+interface GigabitEthernet2
  description Internet
  ip address 172.20.0.6 255.255.255.252
  ip nat outside
@@ -361,14 +363,14 @@ interface GigabitEthernet0/1
  no mop enabled
  no mop sysid
 !
-interface GigabitEthernet0/2
+interface GigabitEthernet3
  description DMZ
  ip address 10.0.0.1 255.255.255.0
  negotiation auto
  no mop enabled
  no mop sysid
 !
-interface GigabitEthernet0/3
+interface GigabitEthernet4
  description DC Core
  ip address 10.0.255.1 255.255.255.252
  ip nat inside
@@ -376,14 +378,14 @@ interface GigabitEthernet0/3
  no mop enabled
  no mop sysid
 !
-interface GigabitEthernet0/4
+interface GigabitEthernet5
  no ip address
  shutdown
  negotiation auto
  no mop enabled
  no mop sysid
 !
-interface GigabitEthernet0/5
+interface GigabitEthernet6
  no ip address
  shutdown
  negotiation auto
@@ -400,9 +402,10 @@ router bgp 65001
  network 10.0.0.0 mask 255.255.0.0
  neighbor 172.20.0.5 remote-as 65000
 !
-ip nat inside source list NAT interface GigabitEthernet0/1 overload
+ip nat inside source list NAT interface GigabitEthernet2 overload
 ip route 0.0.0.0 0.0.0.0 Null0
 ip route 10.0.0.0 255.255.0.0 Null0
+ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 199.66.188.129
 !
 ip ssh version 2
 !
@@ -424,13 +427,13 @@ end
 
 </entry>
         </extensions>
-        <interface id="0" name="GigabitEthernet0/1"/>
-        <interface id="1" name="GigabitEthernet0/2"/>
-        <interface id="2" name="GigabitEthernet0/3"/>
-        <interface id="3" name="GigabitEthernet0/4"/>
-        <interface id="4" name="GigabitEthernet0/5"/>
+        <interface id="0" name="GigabitEthernet2"/>
+        <interface id="1" name="GigabitEthernet3"/>
+        <interface id="2" name="GigabitEthernet4"/>
+        <interface id="3" name="GigabitEthernet5"/>
+        <interface id="4" name="GigabitEthernet6"/>
     </node>
-    <node name="core" type="SIMPLE" subtype="IOSv" location="276,195">
+    <node name="core" type="SIMPLE" subtype="CSR1000v" location="276,195">
         <extensions>
             <entry key="ansible_group" type="String">routers</entry>
             <entry key="config" type="String">!
@@ -457,7 +460,7 @@ username admin privilege 15 password 0 admin
 !
 cdp run
 !
-interface GigabitEthernet0/0
+interface GigabitEthernet1
  description OOB Management
  vrf forwarding Mgmt-intf
  ip address dhcp
@@ -466,21 +469,21 @@ interface GigabitEthernet0/0
  no mop sysid
  cdp enable
 !
-interface GigabitEthernet0/1
+interface GigabitEthernet2
  description DC Border
  ip address 10.0.255.2 255.255.255.252
  negotiation auto
  no mop enabled
  no mop sysid
 !
-interface GigabitEthernet0/2
+interface GigabitEthernet3
  description DC
  ip address 10.0.1.1 255.255.255.0
  negotiation auto
  no mop enabled
  no mop sysid
 !
-interface GigabitEthernet0/3
+interface GigabitEthernet4
  description vedge-hq
  ip address 10.0.255.5 255.255.255.252
  negotiation auto
@@ -510,9 +513,9 @@ end
 
 </entry>
         </extensions>
-        <interface id="0" name="GigabitEthernet0/1"/>
-        <interface id="1" name="GigabitEthernet0/2"/>
-        <interface id="2" name="GigabitEthernet0/3"/>
+        <interface id="0" name="GigabitEthernet2"/>
+        <interface id="1" name="GigabitEthernet3"/>
+        <interface id="2" name="GigabitEthernet4"/>
     </node>
     <node name="hqdc" type="SIMPLE" subtype="Unmanaged Switch" location="166,194">
         <interface id="0" name="link1"/>
@@ -567,7 +570,7 @@ write_files:
         </extensions>
         <interface id="0" name="eth1"/>
     </node>
-    <node name="sp1" type="SIMPLE" subtype="IOSv" location="665,328">
+    <node name="sp1" type="SIMPLE" subtype="CSR1000v" location="665,328">
         <extensions>
             <entry key="ansible_group" type="String">routers</entry>
             <entry key="config" type="String">!
@@ -594,7 +597,7 @@ username admin privilege 15 password 0 admin
 !
 cdp run
 !
-interface GigabitEthernet0/0
+interface GigabitEthernet1
  description OOB Management
  vrf forwarding Mgmt-intf
  ip address dhcp
@@ -602,14 +605,14 @@ interface GigabitEthernet0/0
  no mop enabled
  no mop sysid
 !
-interface GigabitEthernet0/1
+interface GigabitEthernet2
  description internet
  ip address 172.20.0.18 255.255.255.252
  negotiation auto
  no mop enabled
  no mop sysid
 !
-interface GigabitEthernet0/2
+interface GigabitEthernet3
  description spdc
  ip address 10.100.1.1 255.255.255.0
  negotiation auto
@@ -622,6 +625,7 @@ router bgp 65002
  neighbor 172.20.0.17 remote-as 65000
 !
 ip route 10.100.0.0 255.255.0.0 Null0
+ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 199.66.188.129
 !
 ip ssh version 2
 !
@@ -640,8 +644,8 @@ end
 
 </entry>
         </extensions>
-        <interface id="0" name="GigabitEthernet0/1"/>
-        <interface id="1" name="GigabitEthernet0/2"/>
+        <interface id="0" name="GigabitEthernet2"/>
+        <interface id="1" name="GigabitEthernet3"/>
     </node>
     <node name="service1" type="SIMPLE" subtype="lxc-iperf" location="918,326" ipv4="10.100.1.10">
         <extensions>
